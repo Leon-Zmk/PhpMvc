@@ -43,10 +43,32 @@ function Controller(string $control):void{
 
 }
 
-function route($path):string{
+
+function checkRouteMethod(string $method){
+
+    $status=false;
+    if($method=="POST" && $_SERVER["REQUEST_METHOD"]=="POST"){
+         $status=true;
+    }
+    elseif($method=="PUT" && !empty($_POST['_method']) && $_POST['_method'] == "PUT" && $_SERVER["REQUEST_METHOD"] == "POST"){
+         $status=true;
+    }
+    elseif($method=="DELETE" && !empty($_POST['_method']) && $_POST['_method'] == "DELETE" && $_SERVER["REQUEST_METHOD"] == "POST"){
+         $status=true;
+    }
+    return $status;
+}
+
+function route(string $path, array $query =null):string{
+    if($query){
+        $url=url($path);
+        $url .="?".http_build_query($query);
+        return $url;
+    }
     return url($path);
 }
 
 function redirect($url){
     header("location:$url");
 }
+
