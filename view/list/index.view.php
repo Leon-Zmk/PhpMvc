@@ -32,8 +32,10 @@
                         <td><?= $student['class'] ?></td>
                         <td><?= $student['nation_short'] ?></td>
                         <td>
-                            <button class="btn btn-sm btn-primary">Update</button>
-                            <form action="" class="d-inline">
+                            <a href="<?= route("/edit",["id"=>$student['id']]) ?>" class="btn btn-sm btn-primary">Edit</a>
+                            <form action="<?= route("/delete")?>" method="POST" class="d-inline">
+                            <input type="text" hidden name="_method" value="DELETE">
+                            <input type="text" name="id" hidden value="<?= $student['id'] ?>">
                              <button class="btn btn-sm btn-danger">Delete</button>
                             </form>
                         </td>
