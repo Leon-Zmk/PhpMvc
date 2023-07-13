@@ -21,7 +21,7 @@
                 </thead>
                 <tbody>
                    <?php
-                       $students= $data['students'];
+                       $students= $data['students'] ;
                        foreach($students as $student):
 
 
@@ -44,6 +44,9 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            <span>
+               Total : <?php if($data['total']) echo $data['total'] ?>
+            </span>
         </div>
     </div>
 

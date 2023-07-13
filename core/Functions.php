@@ -68,7 +68,45 @@ function route(string $path, array $query =null):string{
     return url($path);
 }
 
-function redirect($url){
+function run(string $query, bool $con=false):bool|object{
+
+    $sql=mysqli_query(con(),$query);
+    $con == true ? mysqli_close(con()):"";
+
+    return $sql;
+
+}
+
+function redirect($url):void{
     header("location:$url");
+}
+
+function sessionStart():void{
+    session_start();
+}
+
+function sessionSet(string $message,string $key= "message" ):void{
+     $_SESSION[$key]=$message;
+}
+
+function getSession(string $key):string{
+    $message=$_SESSION["$key"];
+    session_unset();
+    return $message;
+}
+
+function showSession(string $key="message"){
+    if(!empty($_SESSION["$key"])){
+        return alert(getSession($key));
+    }
+}
+
+
+function alert(string $message, string $color="success"):string{
+    return "
+    <div class='alert my-4 alert-$color' role='alert'>
+           $message
+    </div>
+        ";
 }
 
