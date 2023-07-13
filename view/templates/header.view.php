@@ -8,5 +8,9 @@
 </head>
 <body>
 
-  <div class="container">
+  <div class="container p-5">
+
+  <?php require_once(viewDir."list/navbar.view.php"); ?>
+
+  <?php require_once(viewDir."templates/session-message.view.php");?>
     
