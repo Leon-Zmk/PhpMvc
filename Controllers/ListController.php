@@ -2,15 +2,48 @@
 
 function index(){
 
-    $query="SELECT * FROM students WHERE 1 ORDER BY ID DESC";
-    $sql=mysqli_query(con(),$query);
-    $rows=[];
+    $query="SELECT * FROM students  ";
+     
 
-    while($row=mysqli_fetch_assoc($sql)){
-        $rows[]=$row;
+     if(!empty($_GET['q'])){
+        $q=$_GET['q'];
+        $query .= " WHERE LOWER(name) LIKE '%$q%' ";
+     }
+    
+
+    $total=first(str_replace("*","COUNT(*) AS total",$query))['total'];
+    $limit=10;
+    $toatlpage= $total / $limit;
+    $currentPage= isset($_GET['p']) ? $_GET['p'] : 1;
+    $offset= ($currentPage - 1) * $limit;
+    $query .= " LIMIT $offset,$limit";
+
+    $rows=all($query);
+
+    $links=[];
+
+    for($i=1; $i <= $toatlpage ; $i++){
+
+        $links[]=[
+            "links"=>url($GLOBALS['path'])."?p=$i",
+            "is_active"=>$currentPage == $i? "active":"",
+            "page_number"=>$i
+        ];
     }
 
-    return view('list/index',["students"=>$rows]);
+    $data=[
+        "total" => $total,
+        "limit" => $limit,
+        "toalpage" => $toatlpage,
+        "currentPage" => $currentPage,
+        "links" => $links,
+        "students" => $rows
+    ];
+
+  
+
+
+    return view('list/index',$data);
 }
 
 function create(){
@@ -22,10 +55,9 @@ function store(){
         $gender=$_POST['gender'];
         $class=$_POST['class'];
         $nation=$_POST['nation'];
-
-        $sql="INSERT INTO students (name,gender,class,nation_short) VALUES ('$name','$gender','$class','$nation')";
-        echo $sql;
-        $insertstatus=mysqli_query(con(),$sql);
+        $query="INSERT INTO students (name,gender,class,nation_short) VALUES ('$name','$gender','$class','$nation')";
+        $insertstatus=run($query);
+        sessionSet("Student Add Successfully");
         redirect(route("/"));  
 }
 
@@ -44,9 +76,7 @@ function edit(){
 
     $id=$_GET['id'];
     $query="SELECT * FROM students WHERE id=$id";
-    $sql=mysqli_query(con(),$query);
-    $row=mysqli_fetch_assoc($sql);
-
+    $row=first($query);
     if(!$row){
         dd("There is No such student");
         return;
@@ -54,4 +84,22 @@ function edit(){
 
     return view("list/edit",["student"=>$row]);
 
+}
+
+function all(string $query):array{
+    $sql=run($query);
+    $rows=[];
+
+    while($row=mysqli_fetch_assoc($sql)){
+        $rows[]=$row;
+    }
+    return $rows;
+
+}
+
+function first(string $query):array{
+    $sql=run($query);
+    $row=mysqli_fetch_assoc($sql);
+
+    return $row;
 }
