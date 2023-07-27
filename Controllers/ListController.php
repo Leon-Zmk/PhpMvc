@@ -11,38 +11,7 @@ function index(){
      }
     
 
-    $total=first(str_replace("*","COUNT(*) AS total",$query))['total'];
-    $limit=10;
-    $toatlpage= $total / $limit;
-    $currentPage= isset($_GET['p']) ? $_GET['p'] : 1;
-    $offset= ($currentPage - 1) * $limit;
-    $query .= " LIMIT $offset,$limit";
-
-    $rows=all($query);
-
-    $links=[];
-
-    for($i=1; $i <= $toatlpage ; $i++){
-
-        $links[]=[
-            "links"=>url($GLOBALS['path'])."?p=$i",
-            "is_active"=>$currentPage == $i? "active":"",
-            "page_number"=>$i
-        ];
-    }
-
-    $data=[
-        "total" => $total,
-        "limit" => $limit,
-        "toalpage" => $toatlpage,
-        "currentPage" => $currentPage,
-        "links" => $links,
-        "students" => $rows
-    ];
-
-  
-
-
+     $data=pagination($query);
     return view('list/index',$data);
 }
 
@@ -66,7 +35,9 @@ function delete(){
     $sql="DELETE FROM students WHERE id=$id";
 
     if(mysqli_query(con(),$sql)){
-        return redirect(route("/"));
+        sessionSet("Student Delete Successfully");
+        return redirect($_SERVER['HTTP_REFERER']);
+       
     }else{
         Echo "ERROR";
     }
@@ -86,6 +57,17 @@ function edit(){
 
 }
 
+function update(){
+    $name=$_POST['name'];
+    $gender=$_POST['gender'];
+    $class=$_POST['class'];
+    $nation=$_POST['nation'];
+    $query="UPDATE  students SET name='$name',gender='$gender',class='$class',nation_short='$nation'";
+    $insertstatus=run($query);
+    sessionSet("Student Updated Successfully");
+    redirect(route("/"));  
+}
+
 function all(string $query):array{
     $sql=run($query);
     $rows=[];
@@ -103,3 +85,4 @@ function first(string $query):array{
 
     return $row;
 }
+

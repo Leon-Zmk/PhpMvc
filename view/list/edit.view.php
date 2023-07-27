@@ -10,7 +10,8 @@
               <h4 class="text-center text-primary my-4">Add Student</h4>
               <a href="<?php echo route("/") ?>" class="btn btn-outline-primary">List</a>
             </div>
-            <form action="<?php echo route("/store") ?>" method="POST">
+            <form action="<?= route("/update") ?>" method="POST">
+                <input type="text" hidden name="_method" value="UPDATE" />
                 <div class="form-group">
                     <label class="form-label mb-2 text-primary" for="">Name</label>
                     <input type="text" name="name" class="form-control" value="<?= $student['name'] ?>"  placeholder="enter name">
@@ -29,7 +30,7 @@
                 </div>
                 
                 <div class="text-end mt-4">
-                    <button class="btn btn-primary">Add</button>
+                    <button class="btn btn-primary">Update</button>
                 </div>
             </form>
         </div>

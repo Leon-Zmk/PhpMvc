@@ -11,6 +11,7 @@
             <table class="table table-bordered table-hover text-center">
                 <thead>
                     <tr class=" fw-bolder text-primary">
+                        <td>Id</td>
                         <td>Name</td>
                         <td>Gender</td>
                         <td>Class</td>
@@ -27,6 +28,7 @@
 
                     ?>
                      <tr>
+                        <td><?= $student['id']?></td>
                         <td><?= $student['name'] ?></td>
                         <td><?= $student['gender'] ?></td>
                         <td><?= $student['class'] ?></td>
@@ -44,9 +46,15 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+          <div class="d-flex justify-content-between">
             <span>
                Total : <?php if($data['total']) echo $data['total'] ?>
             </span>
+            
+             <?= paginator($data) ?>
+
+            
+          </div>
         </div>
     </div>
 

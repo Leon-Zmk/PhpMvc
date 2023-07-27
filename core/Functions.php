@@ -56,6 +56,9 @@ function checkRouteMethod(string $method){
     elseif($method=="DELETE" && !empty($_POST['_method']) && $_POST['_method'] == "DELETE" && $_SERVER["REQUEST_METHOD"] == "POST"){
          $status=true;
     }
+    elseif($method=="UPDATE" && !empty($_POST['_method']) && $_POST['_method'] == "UPDATE" && $_SERVER["REQUEST_METHOD"] == "POST"){
+        $status=true;
+   }
     return $status;
 }
 
@@ -110,3 +113,59 @@ function alert(string $message, string $color="success"):string{
         ";
 }
 
+function pagination(string $query):array{
+    
+    $total=first(str_replace("*","COUNT(*) AS total",$query))['total'];
+    $limit=50;
+    $toatlpage= $total / $limit;
+    $currentPage= isset($_GET['p']) ? $_GET['p'] : 1;
+    $offset= ($currentPage - 1) * $limit;
+    $query .= " LIMIT $offset,$limit";
+
+    $rows=all($query);
+
+    $links=[];
+
+    for($i=1; $i <= $toatlpage ; $i++){
+
+        $queries=$_GET;
+        $queries['p'] = $i;
+        $url=url($GLOBALS['path'])."?".http_build_query($queries);
+
+        $links[]=[
+            "link"=>$url,
+            "is_active"=>$currentPage == $i? "active":"",
+            "page_number"=>$i
+        ];
+    }
+
+    $data=[
+        "total" => $total,
+        "limit" => $limit,
+        "toalpage" => $toatlpage,
+        "currentPage" => $currentPage,
+        "links" => $links,
+        "students" => $rows
+    ];
+    return $data;
+}
+
+function paginator(array $data){
+   
+    $li= "";
+
+    foreach($data['links'] as $link){
+       $li .= "<li class='page-item {$link["is_active"]}'><a href='{$link["link"]}' class='page-link'>{$link['page_number']}</a></li>";
+    }
+   
+   return "
+   
+   <nav class='page navigation example'>
+   <ul class='pagination'>
+      .$li.
+   </ul>
+  
+   </nav>
+   
+   ";
+}
