@@ -169,3 +169,24 @@ function paginator(array $data){
    
    ";
 }
+
+function logger(string $message , int $color=32):void{
+    echo "\e[39m[LOG]"."\e[{$color}m".$message;
+}
+
+function createTable(string $name,...$columns){
+
+
+ $sql= "CREATE TABLE `$name` (
+    `id` mediumint(8) UNSIGNED NOT NULL,
+    ".join(",",$columns).",
+    `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+    `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
+   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
+
+ 
+   if(run($sql)){
+    logger("$name Table Created Successfully");
+   }
+   
+}
